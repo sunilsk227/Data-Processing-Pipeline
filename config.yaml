@@ -1,0 +1,81 @@
+# =========================================================
+# Data Processing Pipeline - Configuration
+# =========================================================
+
+# ---- Source ------------------------------------------------
+# type: csv | json | api
+source:
+  type: csv
+  path: data/input/sales_sample.csv
+  # Used only when type == api
+  api:
+    url: "https://api.example.com/records"
+    method: GET
+    params: {}
+    headers: {}
+    timeout: 10
+
+# ---- Output --------------------------------------------------
+output:
+  path: data/output/cleaned_sales.csv
+  format: csv          # csv | json
+  write_report: true    # writes a JSON summary report next to the output
+
+# ---- Schema / column typing ---------------------------------
+# Declares expected columns and the type each should be coerced to.
+# Supported types: int, float, str, bool, date, datetime
+schema:
+  order_id: str
+  customer_name: str
+  email: str
+  product: str
+  quantity: int
+  unit_price: float
+  order_date: date
+  region: str
+  status: str
+
+# ---- Missing value handling -----------------------------------
+# strategy: drop_row | fill | leave
+# fill_value is used when strategy == fill
+missing_values:
+  default_strategy: leave
+  columns:
+    quantity:
+      strategy: fill
+      fill_value: 0
+    unit_price:
+      strategy: fill
+      fill_value: 0.0
+    region:
+      strategy: fill
+      fill_value: "UNKNOWN"
+    customer_name:
+      strategy: drop_row
+    order_id:
+      strategy: drop_row
+
+# ---- Cleaning rules ---------------------------------------------
+cleaning:
+  trim_whitespace: true
+  drop_duplicates: true
+  duplicate_subset: ["order_id"]
+  lowercase_columns: ["email"]
+  uppercase_columns: ["region", "status"]
+  drop_negative_values: ["quantity", "unit_price"]
+  valid_status_values: ["pending", "shipped", "delivered", "cancelled"]
+
+# ---- Transformation rules -----------------------------------------
+transform:
+  # simple derived column: quantity * unit_price
+  add_total_price_column: true
+  rename_columns:
+    customer_name: customer
+  drop_columns: []
+
+# ---- Logging --------------------------------------------------
+logging:
+  level: INFO              # DEBUG | INFO | WARNING | ERROR
+  log_to_file: true
+  log_file: logs/pipeline.log
+  log_to_console: true

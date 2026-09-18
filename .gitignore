@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/*.log
+
+# Generated pipeline output (sample outputs are committed on purpose;
+# uncomment the lines below if you'd rather not track generated files)
+# data/output/*
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
